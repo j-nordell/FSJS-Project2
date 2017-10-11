@@ -8,14 +8,15 @@ let offset = 10;
 
 
 appendPageLinks(studentItems);
-//showPage(1, studentItems);
+showPage(1, studentItems);
 
 function showPage(pageNumber, studentList) {
     let pageLinks = document.querySelectorAll(".pagination ul li a");
     for(var i = 0; i < pageLinks.length; i++) {
-        pageLinks[i].className.replace("active", "");
+        pageLinks[i].classList.remove("active");
     }
-    pageLinks[pageNumber - 1].className = "active";
+
+    pageLinks[pageNumber - 1].classList.add("active");
 
     for(var i = 0; i < studentList.length; i++) {
         studentList[i].style.display = "none";
