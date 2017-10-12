@@ -10,36 +10,55 @@ let offset = 10;
 // start by initializing the page to the first page
 appendPageLinks(studentItems);
 showPage(1, studentItems);
+addSearch();
+
+function hideAllStudents() {
+    // start by hiding all students
+    for(var i = 0; i < studentItems.length; i++) {
+        studentItems[i].style.display = "none";
+    }
+}
+
 
 // show a page of students by sending in the page number and the list of students
 function showPage(pageNumber, studentList) {
-    // retrieve a list of the links that were appended to the page
-    let pageLinks = document.querySelectorAll(".pagination ul li a");
+    if(studentList.length) {
+        // retrieve a list of the links that were appended to the page
+        let pageLinks = document.querySelectorAll(".pagination ul li a");
 
-    // start by hiding all students
-    for(var i = 0; i < studentList.length; i++) {
-        studentList[i].style.display = "none";
-    }
-
-    // remove the active class from all links
-    for(var i = 0; i < pageLinks.length; i++) {
-        pageLinks[i].classList.remove("active");
-    }
-
-    // set the active class on the link for the current page being displayed
-    pageLinks[pageNumber - 1].classList.add("active");
-
-    // if it's the last page show the students that are remaining.  For example if our offset is 10
-    // and there are 16 students this will show the last 6 students without trying to go
-    // out of bounds of the array
-    if(pageNumber == Math.ceil(studentList.length / offset)) {
-        for(var i = (pageNumber * offset) - offset; i < studentList.length; i++) {
-            studentList[i].style.display = "block";
+        // remove the active class from all links
+        for(var i = 0; i < pageLinks.length; i++) {
+            pageLinks[i].classList.remove("active");
         }
-    } else {  // otherwise display students in the appropriate section of the students list
-        for(var i = (pageNumber*offset) - offset; i < (pageNumber * offset); i++) {
-        studentList[i].style.display = "block";
-        }   
+
+        hideAllStudents();
+
+        // set the active class on the link for the current page being displayed
+        pageLinks[pageNumber - 1].classList.add("active");
+
+        // if it's the last page show the students that are remaining.  For example if our offset is 10
+        // and there are 16 students this will show the last 6 students without trying to go
+        // out of bounds of the array
+        if(pageNumber == Math.ceil(studentList.length / offset)) {
+            for(var i = (pageNumber * offset) - offset; i < studentList.length; i++) {
+                studentList[i].style.display = "block";
+            }
+        } else {  // otherwise display students in the appropriate section of the students list
+            for(var i = (pageNumber*offset) - offset; i < (pageNumber * offset); i++) {
+            studentList[i].style.display = "block";
+            }   
+        }
+    } else {
+        hideAllStudents();
+        let pageNode = document.querySelector('.page');
+        let warningDiv = document.createElement('div');
+        let warningHeadline = document.createElement('h4');
+        let warningText = document.createTextNode("No students found...");
+
+        warningDiv.classList.add("warning");
+        warningHeadline.appendChild(warningText);
+        warningDiv.appendChild(warningHeadline);
+        pageNode.appendChild(warningDiv);
     }         
  }
 
@@ -48,8 +67,22 @@ function showPage(pageNumber, studentList) {
     
     // Get the node we need to append our elements to
     let pageNode = document.querySelector(".page");
+
+    // if the div holding the links already exists get rid of it
+    let linkDiv = document.querySelector('.pagination');
+    if(linkDiv) {
+        pageNode.removeChild(linkDiv);
+    }
+    
+    let warningDiv = document.querySelector('.warning');
+    if(warningDiv) {
+        pageNode.removeChild(warningDiv);
+    }
+
+
+
     // Create nodes to be appended
-    let pageDiv = document.createElement("div");
+    linkDiv = document.createElement("div");
     let pageList = document.createElement("ul");
     let pageListItem = document.createElement("li");
     
@@ -57,11 +90,11 @@ function showPage(pageNumber, studentList) {
     numOfPages = Math.ceil(studentList.length / offset);
 
     // create a page link section
-    pageNode.appendChild(pageDiv);
-    pageDiv.appendChild(pageList);
-    pageDiv.className = "pagination";
+    pageNode.appendChild(linkDiv);
+    linkDiv.appendChild(pageList);
+    linkDiv.className = "pagination";
 
-    // “for” every page
+    // For every page
     for(let i = 1; i <= numOfPages; i++) {
         // add a page link to the page link section
         let pageLink = document.createElement("a");  // create a link
@@ -98,18 +131,30 @@ function addSearch() {
 }
 
 function searchList() {
-    // Obtain the value of the search input
+    // Array to hold any matching students
+    let searchResults = [];
 
-    // remove the previous page link section    
-    // Loop over the student list, and for each student…
-// ...obtain the student’s name…
-// ...and the student’s email…
-// ...if the search value is found inside either email or name…
-    		// ...add this student to list of “matched” student
-    // If there’s no “matched” students…
-           // ...display a “no student’s found” message
-    // If over ten students were found…
-           // ...call appendPageLinks with the matched students
-   // Call showPage to show first ten students of matched list
+    // Obtain the value of the search input
+    let searchInput = document.querySelector('input');
+    let searchString = searchInput.value.toLowerCase();
+
+    let studentNames = document.querySelectorAll('.student-details h3');
+    let studentEmails = document.querySelectorAll('.email');
+
+    if(searchString == "") {
+        showPage(1, studentItems);
+    }
+
+    for(var i = 0; i < studentItems.length; i++) {
+        let studentName = studentNames[i].innerHTML.toLowerCase();
+        let studentEmail = studentEmails[i].innerHTML.toLowerCase();
+        if(studentName.includes(searchString) || studentEmail.includes(searchString)) {
+            searchResults.push(studentItems[i])
+        }
+    }
+
+    console.log(searchResults);
+    appendPageLinks(searchResults);
+    showPage(1, searchResults);
 }
 
