@@ -3,7 +3,7 @@
 // Project theme: Pagination
 
 // variable to hold a list of all the students on the page
-let studentItems = document.querySelectorAll(".student-item");
+let studentItems = document.getElementsByClassName("student-item");
 // variable to hold how many students to show per page at max
 let offset = 10;
 
@@ -22,7 +22,7 @@ function hideAllStudents() {
 
 // show a page of students by sending in the page number and the list of students
 function showPage(pageNumber, studentList) {
-    if(studentList.length) {
+    if(studentList.length > 0) {
         // retrieve a list of the links that were appended to the page
         let pageLinks = document.querySelectorAll(".pagination ul li a");
 
@@ -34,7 +34,9 @@ function showPage(pageNumber, studentList) {
         hideAllStudents();
 
         // set the active class on the link for the current page being displayed
-        pageLinks[pageNumber - 1].classList.add("active");
+        if(pageLinks.length > 0) {
+            pageLinks[pageNumber - 1].classList.add("active");
+        }
 
         // if it's the last page show the students that are remaining.  For example if our offset is 10
         // and there are 16 students this will show the last 6 students without trying to go
@@ -50,15 +52,15 @@ function showPage(pageNumber, studentList) {
         }
     } else {
         hideAllStudents();
-        let pageNode = document.querySelector('.page');
-        let warningDiv = document.createElement('div');
-        let warningHeadline = document.createElement('h4');
+        let pageNode = document.getElementsByClassName("page");
+        let warningDiv = document.createElement("div");
+        let warningHeadline = document.createElement("h4");
         let warningText = document.createTextNode("No students found...");
 
         warningDiv.classList.add("warning");
         warningHeadline.appendChild(warningText);
         warningDiv.appendChild(warningHeadline);
-        pageNode.appendChild(warningDiv);
+        pageNode[0].appendChild(warningDiv);
     }         
  }
 
@@ -66,20 +68,18 @@ function showPage(pageNumber, studentList) {
     let numOfPages;
     
     // Get the node we need to append our elements to
-    let pageNode = document.querySelector(".page");
+    let pageNode = document.getElementsByClassName("page");
 
     // if the div holding the links already exists get rid of it
-    let linkDiv = document.querySelector('.pagination');
-    if(linkDiv) {
-        pageNode.removeChild(linkDiv);
+    let linkDiv = document.getElementsByClassName("pagination");
+    if(linkDiv.length > 0) {
+        pageNode[0].removeChild(linkDiv[0]);
     }
     
-    let warningDiv = document.querySelector('.warning');
-    if(warningDiv) {
-        pageNode.removeChild(warningDiv);
+    let warningDiv = document.getElementsByClassName("warning");
+    if(warningDiv.length > 0) {
+        pageNode[0].removeChild(warningDiv[0]);
     }
-
-
 
     // Create nodes to be appended
     linkDiv = document.createElement("div");
@@ -89,29 +89,31 @@ function showPage(pageNumber, studentList) {
     // Math to determine how many pages we need
     numOfPages = Math.ceil(studentList.length / offset);
 
-    // create a page link section
-    pageNode.appendChild(linkDiv);
-    linkDiv.appendChild(pageList);
-    linkDiv.className = "pagination";
+    if(numOfPages > 1) {
+        // create a page link section
+        pageNode[0].appendChild(linkDiv);
+        linkDiv.appendChild(pageList);
+        linkDiv.className = "pagination";
 
-    // For every page
-    for(let i = 1; i <= numOfPages; i++) {
-        // add a page link to the page link section
-        let pageLink = document.createElement("a");  // create a link
-        let pageNumberText = document.createTextNode(i);  // create the link text
-        pageLink.setAttribute("href", "#");  // add href attribute to the link
-        pageLink.addEventListener("click", function() {  // tell the link what to do when clicked
-             showPage(i, studentList);
-        });
-        pageList.appendChild(pageListItem);  // append list item to the unordered list
-        pageListItem.appendChild(pageLink);  // append the link to the list item
-        pageLink.appendChild(pageNumberText);  //append the text to the link
+        // For every page
+        for(let i = 1; i <= numOfPages; i++) {
+            // add a page link to the page link section
+            let pageLink = document.createElement("a");  // create a link
+            let pageNumberText = document.createTextNode(i);  // create the link text
+            pageLink.setAttribute("href", "#");  // add href attribute to the link
+            pageLink.addEventListener("click", function() {  // tell the link what to do when clicked
+                showPage(i, studentList);
+            });
+            pageList.appendChild(pageListItem);  // append list item to the unordered list
+            pageListItem.appendChild(pageLink);  // append the link to the list item
+            pageLink.appendChild(pageNumberText);  //append the text to the link
+        }
     }
 }
 
 // Function to add search bar to the page
 function addSearch() {
-    let pageHeader = document.querySelector(".page-header");
+    let pageHeader = document.getElementsByClassName("page-header");
     let studentSearchDiv = document.createElement("div");
     let inputBox = document.createElement("input");
     let searchButton = document.createElement("button");
@@ -120,7 +122,7 @@ function addSearch() {
     studentSearchDiv.classList.add("student-search");
     inputBox.setAttribute("placeholder", "Search for students..");
     
-    pageHeader.appendChild(studentSearchDiv);
+    pageHeader[0].appendChild(studentSearchDiv);
     studentSearchDiv.appendChild(inputBox);
     studentSearchDiv.appendChild(searchButton);
     searchButton.appendChild(buttonText);
@@ -135,11 +137,11 @@ function searchList() {
     let searchResults = [];
 
     // Obtain the value of the search input
-    let searchInput = document.querySelector('input');
-    let searchString = searchInput.value.toLowerCase();
+    let searchInput = document.getElementsByTagName("input");
+    let searchString = searchInput[0].value.toLowerCase();
 
     let studentNames = document.querySelectorAll('.student-details h3');
-    let studentEmails = document.querySelectorAll('.email');
+    let studentEmails = document.getElementsByClassName("email");
 
     if(searchString == "") {
         showPage(1, studentItems);
@@ -153,7 +155,6 @@ function searchList() {
         }
     }
 
-    console.log(searchResults);
     appendPageLinks(searchResults);
     showPage(1, searchResults);
 }
