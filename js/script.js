@@ -76,8 +76,30 @@ function showPage(pageNumber, studentList) {
     }
 }
 
+// Function to add search bar to the page
+function addSearch() {
+    let pageHeader = document.querySelector(".page-header");
+    let studentSearchDiv = document.createElement("div");
+    let inputBox = document.createElement("input");
+    let searchButton = document.createElement("button");
+    let buttonText = document.createTextNode("Search");
+
+    studentSearchDiv.classList.add("student-search");
+    inputBox.setAttribute("placeholder", "Search for students..");
+    
+    pageHeader.appendChild(studentSearchDiv);
+    studentSearchDiv.appendChild(inputBox);
+    studentSearchDiv.appendChild(searchButton);
+    searchButton.appendChild(buttonText);
+
+    searchButton.addEventListener("click", function() {
+        searchList();
+    });
+}
+
 function searchList() {
     // Obtain the value of the search input
+
     // remove the previous page link section    
     // Loop over the student list, and for each student…
 // ...obtain the student’s name…
