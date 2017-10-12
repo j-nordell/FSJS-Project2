@@ -51,6 +51,7 @@ function showPage(pageNumber, studentList) {
             }   
         }
     } else {
+        // Hide all students and append a headline informing the user that no results were mathing the search
         hideAllStudents();
         let pageNode = document.getElementsByClassName("page");
         let warningDiv = document.createElement("div");
@@ -76,20 +77,23 @@ function showPage(pageNumber, studentList) {
         pageNode[0].removeChild(linkDiv[0]);
     }
     
+    // if there is currently a no results found div remove it
     let warningDiv = document.getElementsByClassName("warning");
     if(warningDiv.length > 0) {
         pageNode[0].removeChild(warningDiv[0]);
     }
 
-    // Create nodes to be appended
-    linkDiv = document.createElement("div");
-    let pageList = document.createElement("ul");
-    let pageListItem = document.createElement("li");
-    
     // Math to determine how many pages we need
     numOfPages = Math.ceil(studentList.length / offset);
 
+    // Create pagination links only if there is more than one page of results to display
     if(numOfPages > 1) {
+        
+        // Create nodes to be appended
+        linkDiv = document.createElement("div");
+        let pageList = document.createElement("ul");
+        let pageListItem = document.createElement("li");
+        
         // create a page link section
         pageNode[0].appendChild(linkDiv);
         linkDiv.appendChild(pageList);
@@ -113,20 +117,26 @@ function showPage(pageNumber, studentList) {
 
 // Function to add search bar to the page
 function addSearch() {
+    // Get the section we need to attach the search bar to
     let pageHeader = document.getElementsByClassName("page-header");
+    
+    // Create the nodes for the search bar
     let studentSearchDiv = document.createElement("div");
     let inputBox = document.createElement("input");
     let searchButton = document.createElement("button");
     let buttonText = document.createTextNode("Search");
 
+    // Add classes and attributes where appropriate    
     studentSearchDiv.classList.add("student-search");
     inputBox.setAttribute("placeholder", "Search for students..");
     
+    // Append the nodes to each other and put them in the DOM
     pageHeader[0].appendChild(studentSearchDiv);
     studentSearchDiv.appendChild(inputBox);
     studentSearchDiv.appendChild(searchButton);
     searchButton.appendChild(buttonText);
 
+    // Do something when the button is clicked
     searchButton.addEventListener("click", function() {
         searchList();
     });
@@ -140,13 +150,16 @@ function searchList() {
     let searchInput = document.getElementsByTagName("input");
     let searchString = searchInput[0].value.toLowerCase();
 
+    // Get the students names and emails
     let studentNames = document.querySelectorAll('.student-details h3');
     let studentEmails = document.getElementsByClassName("email");
 
+    // If the search field contains an empty string reset back to default search
     if(searchString == "") {
         showPage(1, studentItems);
     }
 
+    // Search through the students names and emails for the text in the textbox and create a new list
     for(var i = 0; i < studentItems.length; i++) {
         let studentName = studentNames[i].innerHTML.toLowerCase();
         let studentEmail = studentEmails[i].innerHTML.toLowerCase();
