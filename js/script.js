@@ -5,7 +5,7 @@
 // variable to hold a list of all the students on the page
 let studentItems = document.getElementsByClassName("student-item");
 // variable to hold how many students to show per page at max
-let offset = 10;
+const offset = 10;
 
 // start by initializing the page to the first page
 appendPageLinks(studentItems);
@@ -13,56 +13,62 @@ showPage(1, studentItems);
 addSearch();
 
 function hideAllStudents() {
-    // start by hiding all students
     for(var i = 0; i < studentItems.length; i++) {
         studentItems[i].style.display = "none";
     }
 }
 
+// Display the text if no matches were found
+function showNoResults() {
+    hideAllStudents()
+
+    let pageNode = document.getElementsByClassName("page");
+    let warningDiv = document.createElement("div");
+    let warningHeadline = document.createElement("h4");
+    let warningText = document.createTextNode("No students found...");
+
+    warningDiv.classList.add("warning");
+    warningHeadline.appendChild(warningText);
+    warningDiv.appendChild(warningHeadline);
+    pageNode[0].appendChild(warningDiv);
+
+}
+
 
 // show a page of students by sending in the page number and the list of students
 function showPage(pageNumber, studentList) {
-    if(studentList.length > 0) {
-        // retrieve a list of the links that were appended to the page
-        let pageLinks = document.querySelectorAll(".pagination ul li a");
 
-        // remove the active class from all links
-        for(var i = 0; i < pageLinks.length; i++) {
-            pageLinks[i].classList.remove("active");
-        }
+    if(studentList.length <= 0) {
+        return showNoResults();
+    }
 
-        hideAllStudents();
+    // retrieve a list of the links that were appended to the page
+    let pageLinks = document.querySelectorAll(".pagination ul li a");
 
-        // set the active class on the link for the current page being displayed
-        if(pageLinks.length > 0) {
-            pageLinks[pageNumber - 1].classList.add("active");
-        }
+    // remove the active class from all links
+    for(var i = 0; i < pageLinks.length; i++) {
+        pageLinks[i].classList.remove("active");
+    }
 
-        // if it's the last page show the students that are remaining.  For example if our offset is 10
-        // and there are 16 students this will show the last 6 students without trying to go
-        // out of bounds of the array
-        if(pageNumber == Math.ceil(studentList.length / offset)) {
-            for(var i = (pageNumber * offset) - offset; i < studentList.length; i++) {
-                studentList[i].style.display = "block";
-            }
-        } else {  // otherwise display students in the appropriate section of the students list
-            for(var i = (pageNumber*offset) - offset; i < (pageNumber * offset); i++) {
+    hideAllStudents();
+
+    // set the active class on the link for the current page being displayed
+    if(pageLinks.length > 0) {
+        pageLinks[pageNumber - 1].classList.add("active");
+    }
+
+    // if it's the last page show the students that are remaining.  For example if our offset is 10
+    // and there are 16 students this will show the last 6 students without trying to go
+    // out of bounds of the array
+    if(pageNumber == Math.ceil(studentList.length / offset)) {
+        for(var i = (pageNumber * offset) - offset; i < studentList.length; i++) {
             studentList[i].style.display = "block";
-            }   
         }
-    } else {
-        // Hide all students and append a headline informing the user that no results were mathing the search
-        hideAllStudents();
-        let pageNode = document.getElementsByClassName("page");
-        let warningDiv = document.createElement("div");
-        let warningHeadline = document.createElement("h4");
-        let warningText = document.createTextNode("No students found...");
-
-        warningDiv.classList.add("warning");
-        warningHeadline.appendChild(warningText);
-        warningDiv.appendChild(warningHeadline);
-        pageNode[0].appendChild(warningDiv);
-    }         
+    } else {  // otherwise display students in the appropriate section of the students list
+        for(var i = (pageNumber*offset) - offset; i < (pageNumber * offset); i++) {
+        studentList[i].style.display = "block";
+        }   
+    }           
  }
 
  function appendPageLinks(studentList) {
@@ -131,10 +137,10 @@ function addSearch() {
     inputBox.setAttribute("placeholder", "Search for students..");
     
     // Append the nodes to each other and put them in the DOM
-    pageHeader[0].appendChild(studentSearchDiv);
+    searchButton.appendChild(buttonText);
     studentSearchDiv.appendChild(inputBox);
     studentSearchDiv.appendChild(searchButton);
-    searchButton.appendChild(buttonText);
+    pageHeader[0].appendChild(studentSearchDiv);
 
     // Do something when the button is clicked
     searchButton.addEventListener("click", function() {
