@@ -31,7 +31,6 @@ function showNoResults() {
     warningHeadline.appendChild(warningText);
     warningDiv.appendChild(warningHeadline);
     pageNode[0].appendChild(warningDiv);
-
 }
 
 
